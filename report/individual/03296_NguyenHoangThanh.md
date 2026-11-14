@@ -32,33 +32,37 @@ Số keyframe lấy từ kết quả `src/check_submission.py`.
 
 | Mã | Số keyframe | Keyframe ở frame | Số frame có mặt | Keyframe / 100 frame | Thời gian (phút) | Chỗ khó |
 |---|---|---|---|---|---|---|
-| P1 | | | | | | |
-| P2 | | | | | | |
-| P3 | | | | | | |
-| P4 | | | | | | |
-| P5 | | | | | | |
-| **Tổng** | | | | | | |
+| P1 |8 |0, 29, 48, 52, 65, 71, 89, 142 |143 |5.6 | |Bị che từ frame 29-51 trong đó từ 29-42 và 50-53 bị che khuất 1 phần(occluded) từ 41-47 bị che khuất hoàn toàn(outside) |
+| P2 |3 |0, 79, 149 |150 |2.0 | |Người này di chuyển tương đối tuyến tính và kích thước xuất hiện trong khung hình cũng lớn nên không gặp vấn đề gì khi tracking |
+| P3 |8 |0, 20, 88, 89, 90, 118, 126, 149 |150 |5.3 | |Người này di chuyển tương đối tuyến tính và kích thước xuất hiện trong khung hình cũng lớn nên không gặp vấn đề gì khi tracking |
+| P4 |7 |0, 106, 136, 137, 140, 143, 146 |121 |5.8 | |Bị che từ frame 110-135 |
+| P5 |7 |40, 51, 55, 57, 62, 83, 140 |110 |6.4 | |Người này chỉ xuất hiện từ frame 40, từ frame 40-61 bị che khuất 1 phần, đặc biệt từ frame 40-56 phần thân dưới của người này bị quầy hàng che khuất nên chỉ tracking được phần thân trên |
+| **Tổng** |33 | |674 |4.9 | | |
 
 Keyframe / 100 frame của cả bài = tổng keyframe ÷ tổng số frame có mặt × 100 = ...
 
 Bạn đặt keyframe nhiều nhất ở người nào? Vì sao (người đó rẽ, dừng, lại gần camera hay bị che)?
+Tôi đặt keyframe nhiều nhất ở người đàn ông áo đen bên trong cửa hàng vì người đó bị che 23 frame và người đó có quỹ đạo di chuyển lại gần camera.
 
 ...
 
 ## 3. Đoạn bị che (CP2)
 
-Người bị che: `P_`
+Người bị che: `P1`
 
 | Mốc | Frame |
 |---|---:|
-| Bắt đầu bị che một phần (bật `occluded`) | |
-| Mất hẳn (bật `outside`) | |
-| Hiện lại (tắt `outside`) | |
-| Thấy rõ trở lại (tắt `occluded`) | |
+| Bắt đầu bị che một phần (bật `occluded`) |29 |
+| Mất hẳn (bật `outside`) |41 |
+| Hiện lại (tắt `outside`) |48 |
+| Thấy rõ trở lại (tắt `occluded`) |54 |
 
-- Thời gian khuất hẳn: ___ frame = ___ giây.
-- Quyết định: giữ cùng ID / tạo track mới.
+- Thời gian khuất hẳn: 8 frame = 0.267 giây.
+- Quyết định: giữ cùng ID.
 - Lý do (trả lời 3 câu: khuất bao lâu so với 60 frame, ngoại hình có khớp, chỗ hiện lại có đúng hướng và tốc độ):
+1. Thời gian khuất: P1 chỉ bị khuất hẳn 8 frame (~0.33 giây), ngắn hơn rất nhiều so với ngưỡng 60 frame.
+2. Ngoại hình có khớp: Người xuất hiện lại có ngoại hình hoàn toàn trùng khớp.
+3. Chỗ hiện lại: Vị trí xuất hiện lại hoàn toàn đúng theo hướng và quỹ đạo chuyển động: tiếp tục bước đi thẳng đều từ trái sang phải bên trong cửa hàng. -> Quyết định giữ cùng ID.
 
 ...
 
@@ -69,26 +73,7 @@ Người bị che: `P_`
 ![Sau khi hiện lại, cùng ID](images/che_3_sau.png)
 
 ## 4. Tự review ID (CP3)
-
-Lượt 1 theo người (đi ngược từ frame 149 về 0 trên CVAT), lượt 2 theo cảnh (nhảy 10 frame). Ít nhất 3 dòng; không có lỗi thì ghi một dòng "đã kiểm hai lượt, không lỗi".
-
-Loại lỗi dùng đúng một trong 7 mã: `id_switch`, `fragmentation`, `lost`, `merge`, `false_track`, `drift`, `flag`.
-
-| Frame | Mã người | Loại lỗi | Mô tả một câu | Phát hiện ở lượt | Đã sửa? |
-|---:|---|---|---|---|---|
-| | | | | | |
-| | | | | | |
-| | | | | | |
-
-Tổng hợp số lỗi theo loại:
-
-| `id_switch` | `fragmentation` | `lost` | `merge` | `false_track` | `drift` | `flag` |
-|---:|---:|---:|---:|---:|---:|---:|
-| | | | | | | |
-
-Lỗi nào chỉ lượt 2 (theo cảnh) mới thấy, lượt 1 (theo người) không thấy? Vì sao?
-
-...
+Đã kiểm hai lượt, không lỗi
 
 ## 5. File xuất và kết quả tự kiểm (CP4)
 
@@ -101,12 +86,14 @@ Lỗi nào chỉ lượt 2 (theo cảnh) mới thấy, lượt 1 (theo người)
 | Job đã completed trên CVAT máy cá nhân | |
 
 Dán phần tóm tắt in ra từ `src/check_submission.py`:
+Số frame in theo CVAT (bắt đầu từ 0). Trong gt.txt, frame_id = frame CVAT + 1.
+
 === File MOT 1.1: NguyenHoangThanh_mot.zip ===
-  Số track ID: 5   |   Tổng số box: 681
+  Số track ID: 5   |   Tổng số box: 674
   [OK]        Đúng 5 track ID.
 
   Track | Frame có mặt | Số frame | Đoạn vắng (outside)
-      1 |   0–149      |      150 | -
+      1 |   0–149      |      143 | 41–47
       2 |   0–149      |      150 | -
       3 |   0–149      |      150 | -
       4 |   0–146      |      121 | 110–135
@@ -117,42 +104,40 @@ Dán phần tóm tắt in ra từ `src/check_submission.py`:
 === File CVAT for video 1.1: NguyenHoangThanh_cvat_video.zip ===
 
   Track | Nhãn   | Frame thấy | Keyframe | KF/100 frame | Frame occluded | Lần bật outside
-      0 | person |        150 |       83 |         55.3 |             23 |               0
-              Track 0: keyframe ở frame [0, 1, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 39, 40, 48, 49, 50, 51, 52, 53, 54, 55, 57, 58, 59, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 87, 88, 95, 97, 99, 100, 102, 103, 107, 109, 111, 114, 119, 122, 127, 130, 135, 140, 142, 145, 148, 149]
-  [CẢNH BÁO]  Track 0: 55 keyframe / 100 frame > 50. Quá dày, dồn keyframe vào chỗ rẽ / dừng / bị che.
-      1 | person |        150 |       72 |         48.0 |              0 |               0
-              Track 1: keyframe ở frame [0, 5, 8, 14, 16, 18, 20, 26, 38, 40, 41, 43, 45, 46, 47, 50, 51, 56, 59, 61, 62, 64, 65, 66, 69, 73, 74, 76, 77, 79, 82, 85, 87, 88, 89, 90, 91, 92, 94, 97, 99, 101, 102, 103, 104, 105, 106, 107, 113, 116, 120, 121, 122, 123, 124, 126, 128, 129, 132, 133, 135, 136, 137, 138, 139, 140, 141, 142, 143, 145, 148, 149]
-      2 | person |        150 |       31 |         20.7 |              0 |               0
-              Track 2: keyframe ở frame [0, 8, 16, 20, 22, 23, 32, 38, 51, 58, 64, 75, 84, 88, 89, 90, 96, 105, 109, 115, 118, 123, 126, 131, 134, 139, 141, 142, 145, 146, 149]
-      3 | person |        121 |       12 |          9.9 |             12 |               2
-              Track 3: keyframe ở frame [0, 2, 3, 13, 19, 27, 106, 136, 137, 140, 143, 146]
-      4 | person |        110 |       26 |         23.6 |             22 |               0
-              Track 4: keyframe ở frame [40, 41, 43, 50, 51, 55, 58, 59, 60, 61, 62, 63, 68, 69, 75, 77, 83, 89, 92, 96, 104, 123, 135, 137, 139, 140]
+      0 | person |        143 |        8 |          5.6 |             16 |               1
+              Track 0: keyframe ở frame [0, 29, 48, 52, 65, 71, 89, 142]
+      1 | person |        150 |        3 |          2.0 |              0 |               0
+              Track 1: keyframe ở frame [0, 79, 149]
+      2 | person |        150 |        8 |          5.3 |              0 |               0
+              Track 2: keyframe ở frame [0, 20, 88, 89, 90, 118, 126, 149]
+      3 | person |        121 |        7 |          5.8 |             12 |               2
+              Track 3: keyframe ở frame [0, 106, 136, 137, 140, 143, 146]
+      4 | person |        110 |        7 |          6.4 |             22 |               0
+              Track 4: keyframe ở frame [40, 51, 55, 57, 62, 83, 140]
 
-  Tổng: 224 keyframe / 681 frame có mặt = 32.9 keyframe / 100 frame
+  Tổng: 33 keyframe / 674 frame có mặt = 4.9 keyframe / 100 frame
   [OK]        Đọc được 5 track từ annotations.xml.
 
 === Tóm tắt ===
-  Lỗi: 0   |   Cảnh báo: 2
+  Lỗi: 0   |   Cảnh báo: 1
   Không có lỗi định dạng. Mở CVAT xem lại từng [CẢNH BÁO]; cảnh báo đúng ý bạn thì ghi lý do vào báo cáo.
 
 Lý do xuất hiện cảnh báo:
-Cảnh báo 1: Chiều cao box đổi bởi vì ở frame 56, phần thân dưới của đối tượng bị che khuất bởi quầy hàng, tôi chỉ thực hiện gán nhãn cho phần nhìn thấy. Khi sang frame 57, phần thân dưới của đối tượng lộ ra, tôi thực hiện gán nhãn cho cả cơ thể đối tượng nên chiều cao box có sự chênh lệch rõ ràng.
-Cảnh báo 2: Keyframe quá dày do đối tượng xuất hiện 23 frame occluded, mỗi frame occluded tôi đều để là keyframe, đây là một sai lầm.
+Chiều cao box đổi bởi vì ở frame 56, phần thân dưới của đối tượng bị che khuất bởi quầy hàng, tôi chỉ thực hiện gán nhãn cho phần nhìn thấy. Khi sang frame 57, phần thân dưới của đối tượng lộ ra, tôi thực hiện gán nhãn cho cả cơ thể đối tượng nên chiều cao box có sự chênh lệch rõ ràng.
+
 
 ## 6. Ba câu kết
 
 1. Nếu được gán lại, bạn sẽ đặt keyframe khác ở đâu? Vì sao?
-
-   ...
+   Nếu được gán lại, tôi sẽ đặt lại track P5 từ frame 57. Vì những frame đầu P5 rất khó nhìn và nếu chỉ track phần nhìn thấy rồi về sau thì nó sẽ dịch chuyển độ rộng box rất nhanh trong vài frame.
 
 2. Có chỗ nào bạn không chắc "cùng ID hay ID mới"? Bạn đã quyết định và ghi chú thế nào?
-
-   ...
+   Không có.
 
 3. Một lỗi ID trong job của bạn (nếu không còn sót, chọn lỗi đã sửa) có thể làm xe tự lái dự đoán sai chuyển động của người đó như thế nào? Lỗi đó ảnh hưởng MOTA hay IDF1 nhiều hơn?
 
-   ...
+   Ảnh hưởng xe tự lái: Nếu xảy ra lỗi id_switch (ví dụ ID của P1 nhảy sang P5 khi cắt mặt), hệ thống tracking của xe tự lái sẽ gộp quỹ đạo 2 người thành một track duy nhất. Điều này làm vector vận tốc tức thời tính toán bị nhảy vọt bất thường. Module dự đoán quỹ đạo (trajectory prediction) sẽ phán đoán sai rằng người đi bộ đang lao sang làn đường với tốc độ cực lớn, dẫn đến việc xe tự lái phanh gấp khẩn cấp (phantom braking) hoặc đánh lái né tránh sai lầm, gây nguy hiểm.
+   Ảnh hưởng MOTA hay IDF1: Lỗi này ảnh hưởng IDF1 nhiều hơn MOTA. MOTA tính tổng lỗi theo từng frame độc lập (FN + FP + IDSW), nên một lần đổi ID chỉ bị phạt 1 điểm IDSW, làm MOTA giảm rất ít (< 1–2%). Trong khi đó, IDF1 đo lường mức độ duy trì định danh xuyên suốt của một track (ID consistency); khi một người bị chia làm 2 ID, toàn bộ nửa sau của track sẽ bị tính là sai ID, khiến điểm IDF1 tụt giảm nặng nề
 
 ## Bonus (nếu làm)
 
